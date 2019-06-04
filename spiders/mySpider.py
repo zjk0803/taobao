@@ -17,7 +17,7 @@ def index_page(page):
     """
     print('正在爬取第',page,'页')
     try:
-        url = 'http://www.taobao.com/search?q=' + quote(KEYWORD)
+        url = 'https://list.tmall.com/search_product.htm?q=' + quote(KEYWORD)
         browser.get(url)
         if page > 1:
             input = wait.until(
