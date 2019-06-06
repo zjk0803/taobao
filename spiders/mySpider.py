@@ -4,7 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
-browser = webdriver.Chrome(executable_path=r'D:\google浏览器\Application\chromedriver.exe')
+browser = webdriver.Chrome('D:\google浏览器\Application\chromedriver1.exe')
 wait = WebDriverWait(browser,10)
 
 KEYWORD = 'ipad'
@@ -17,7 +17,7 @@ def index_page(page):
     """
     print('正在爬取第',page,'页')
     try:
-        url = 'https://list.tmall.com/search_product.htm?q=' + quote(KEYWORD)
+        url = 'https://list.tmall.com/search_product.htm?q=' + KEYWORD
         browser.get(url)
         if page > 1:
             input = wait.until(

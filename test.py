@@ -1,6 +1,7 @@
 import re
 import requests
-
+import cv2
+import numpy as np
 #定义一个类
 
 class T(object):
@@ -32,10 +33,18 @@ class T(object):
 
 
 if __name__ == "__main__":
-    chromedriver_path = "/D:\google浏览器\Application/chromedriver.exe"  # 改成你的chromedriver的完整路径地址
-    weibo_username = "改成你的微博账号"  # 改成你的微博账号
-    weibo_password = "改成你的微博密码"  # 改成你的微博密码
+
 
     a = T()
 
     a.rq_login()
+img = cv2.imread("img.png",cv2.IMREAD_COLOR)
+emptyImage = np.zeros(img.shape, np.uint8)
+
+emptyImage2 = img.copy()
+
+
+
+cv2.imshow("EmptyImage3", img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
