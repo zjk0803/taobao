@@ -1,40 +1,36 @@
-from selenium import webdriver
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.wait import WebDriverWait
+# -*- coding: utf-8 -*-
 
-browser = webdriver.Chrome('D:\google浏览器\Application\chromedriver1.exe')
-wait = WebDriverWait(browser,10)
 
-KEYWORD = 'ipad'
+from time import sleep
+import time
+import random
+from pyquery import PyQuery as pq
 
-def index_page(page):
-    """
-    抓取索引页
-    :param page:
-    :return:
-    """
-    print('正在爬取第',page,'页')
-    try:
-        url = 'https://list.tmall.com/search_product.htm?q=' + KEYWORD
-        browser.get(url)
-        if page > 1:
-            input = wait.until(
-                EC.presence_of_all_elements_located((By.CSS_SELECTOR,'#mainsrp-pager div.form>input')))
-            submit = wait.until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR,'#mainsrp-pager div.form> span.btn.J_Submit'))
-            )
+from scrapy import Request,Spider
+from urllib.parse import quote
+from taobao.items import TaobaoItem
 
-            input.clear()
-            input.send_keys(page)
-            submit.click()
-        wait.until(
-            EC.text_to_be_present_in_element((By.CSS_SELECTOR,'#mainsrp-pager li.item.active >span'),str(page))
-        )
-        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR,'m-itemlist .items .item')))
-        get_products()
-    except TimeoutException:
-        index_page()
+class loginTB(Spider):
+    name = 'taobao'
+    allowed_domains = ['www.taobao.com']
+    base_url = 'https://s.taobao.com/search?q='
+    def start_requests(self):
+        for keyword in self.settings.get('KEYWORD'):
+            for page in range(1,self.settings.get('MAX_PAGE') + 1):
+                url = self.base_url + quote(keyword)
+                yield Request(url=url,callback=self.parse,meta={'page':page},dont_filter=True)
+    def parse(self, response):
+        products = response.xpath('//div[@id=mainsrp-itemlist]//div[@class="items"][1]//div[contains(@class,"item")]')
+        for product in products:
+            item = TaobaoItem()
+            item['price']=''.join(product.xpath('.//div[contains(@class,"price")]//text()').extract()).strip()
+            item['title'] = ''.join(product.xpath('.//div[contains(@class,"title")]//text()').extract()).strip()
+            item['shop'] = ''.join(product.xpath('.//div[contains(@class,"shop")]//text()').extract()).strip()
+            item['image'] = ''.join(product.xpath('.//div[@class="pic"]//img=[contains(@class,"img")]/@data=src').extract()).strip()
+            item['deal'] = product.xpath('.//div[contains(@class,"deal-cnt")]//text()').extract_first()
+            item['location'] = product.xpath('.//div[contains(@class,"location")]//text()').extract_first()
+            yield item
+
+
 
 

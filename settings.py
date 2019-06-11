@@ -13,6 +13,8 @@ BOT_NAME = 'taobao'
 
 SPIDER_MODULES = ['taobao.spiders']
 NEWSPIDER_MODULE = 'taobao.spiders'
+KEYWORDS = ['ipad']
+MAX_PAGE = 100
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
