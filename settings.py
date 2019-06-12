@@ -13,9 +13,15 @@ BOT_NAME = 'taobao'
 
 SPIDER_MODULES = ['taobao.spiders']
 NEWSPIDER_MODULE = 'taobao.spiders'
-KEYWORDS = ['ipad']
+KEYWORDS = ['iPad']
 MAX_PAGE = 100
+ITEM_PIPELINES = {
+    'taobao.pipelines.TaobaoPipeline':300,
 
+}
+DOWNLOADER_MIDDLEWARES={
+    'taobao.middlewares.TaobaoSpiderMiddleware':543,
+}
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'taobao (+http://www.yourdomain.com)'

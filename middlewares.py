@@ -14,19 +14,21 @@ from scrapy import signals
 from logging import getLogger
 
 
-class TaobaoSpiderMiddleware(object):
+class TaobaoSpiderMiddleware():
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
     # passed objects.
     def __init__(self):
         self.driver = webdriver.Chrome("D:\google浏览器\Application\chromedriver1.exe")
-        self.driver.maximize_window()
-        # 设置一个智能等待
-        self.wait = WebDriverWait(self.driver,5)
+        self.logger = getLogger(__name__)
+        self.timeout = timeout
+        self.browser = webdriver.PhantomJS(service_args=service_args)
+        self.set_window_size(1400,700)
+        self.browser.set_page_load_timeout(self.timeout)
+        self.wait = WebDriverWait(self.browser,self.timeout)
 
-    def __del__(self):
-        self.browser.close()
-    @classmethod
+
+
 
     def from_crawler(cls, crawler):
         # This method is used by Scrapy to create your spiders.

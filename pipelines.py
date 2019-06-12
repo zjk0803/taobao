@@ -9,9 +9,9 @@ class TaobaoPipeline(object):
     def open_spider(self,spider):
         print("opened")
         try:
-            self.con = pymysql.connect(host = "127.0.0.1",port = 3306,user = "root",passwd = "123456",db = "Bilibili",charset='utf8')
+            self.con = pymysql.connect(host = "127.0.0.1",port = 3306,user = "root",passwd = "123456",db = "TB",charset='utf8')
             self.cursor = self.con.cursor(pymysql.cursors.DictCursor)
-            self.cursor.execute("delete from test")
+            self.cursor.execute("delete from tbdb")
             self.opened = True
             self.count = 0
         except Exception as err:
@@ -26,14 +26,15 @@ class TaobaoPipeline(object):
         print("总共爬取",self.count,"个视频")
     def process_item(self,item,spider):
         try:
+            print((item["price"]))
             print((item["title"]))
-            print((item["num"]))
-            print((item["top"]))
-            print(item["author"])
-            print((item["comment_num"]))
+            print((item["shop"]))
+            print(item["image"])
+            print((item["deal"]))
+            print((item["location"]))
             print()
             if self.opened:
-                self.cursor.execute("insert into test(title,num,top,author,comment_num)values (%s,%s,%s,%s,%s)",(item["title"],item["num"],item["top"],item["author"],item["comment_num"]))
+                self.cursor.execute("insert into tbdb(price,title,shop,image,deal,location)values (%s,%s,%s,%s,%s,%s)",(item["price"],item["title"],item["shop"],item["image"],item["deal"],item["location"]))
                 self.count += 1
 
         except Exception as err:
