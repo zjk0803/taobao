@@ -29,12 +29,12 @@ class TaobaoPipeline(object):
             print((item["price"]))
             print((item["title"]))
             print((item["shop"]))
-            print(item["image"])
+            #print(item["image"])
             print((item["deal"]))
             print((item["location"]))
             print()
             if self.opened:
-                self.cursor.execute("insert into tbdb(price,title,shop,image,deal,location)values (%s,%s,%s,%s,%s,%s)",(item["price"],item["title"],item["shop"],item["image"],item["deal"],item["location"]))
+                self.cursor.execute("insert into tbdb(price,title,shop,deal,location)values (%s,%s,%s,%s,%s)",(item["price"],item["title"],item["shop"],item["deal"],item["location"]))
                 self.count += 1
 
         except Exception as err:

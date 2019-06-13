@@ -12,11 +12,11 @@ class TaobaoItem(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     collection = 'products'
-    image = Field()
+    #image = Field()
     price = Field()
-    deal = Field()
     title = Field()
     shop = Field()
+    deal = Field()
     location = Field()
 
     pass
