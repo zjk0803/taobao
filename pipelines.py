@@ -23,7 +23,7 @@ class TaobaoPipeline(object):
             self.con.close()
             self.opened = False
         print("close")
-        print("总共爬取",self.count,"个视频")
+        print("总共爬取",self.count,"个商品")
     def process_item(self,item,spider):
         try:
             print((item["price"]))

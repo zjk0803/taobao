@@ -1,95 +1,84 @@
-# -*- coding: utf-8 -*-
-
-# Define here the models for your spider middleware
-#
-# See documentation in:
-# http://doc.scrapy.org/en/latest/topics/spider-middleware.html
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
 from scrapy.http import HtmlResponse
+from selenium.common.exceptions import TimeoutException
+import time
 from scrapy import signals
-from logging import getLogger
+import random
 
 
-class TaobaoSpiderMiddleware():
+
+
+'''class SeleniumMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
-    # scrapy acts as if the spider middleware does not modify the
+    # scrapy acts as if the downloader middleware does not modify the
     # passed objects.
-    def __init__(self):
-        self.driver = webdriver.Chrome("D:\google浏览器\Application\chromedriver1.exe")
-        self.logger = getLogger(__name__)
-        self.timeout = timeout
-        self.browser = webdriver.PhantomJS(service_args=service_args)
-        self.set_window_size(1400,700)
-        self.browser.set_page_load_timeout(self.timeout)
-        self.wait = WebDriverWait(self.browser,self.timeout)
 
-
-
-
+    @classmethod
     def from_crawler(cls, crawler):
         # This method is used by Scrapy to create your spiders.
         s = cls()
         crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
         return s
 
-    def process_spider_input(response, spider):
-        # Called for each response that goes through the spider
-        # middleware and into the spider.
+    def process_request(self, request, spider):
+        # Called for each request that goes through the downloader
+        # middleware.
 
-        # Should return None or raise an exception.
+        # Must either:
+        # - return None: continue processing this request
+        # - or return a Response object
+        # - or return a Request object
+        # - or raise IgnoreRequest: process_exception() methods of
+        #   installed downloader middleware will be called
         return None
 
-    def process_spider_output(response, result, spider):
-        # Called with the results returned from the Spider, after
-        # it has processed the response.
+    def process_response(self, request, response, spider):  # 设置代理###################################################
+        # Called with the response returned from the downloader.
+        user_agent_list = []
+        ######################################设置请求头部
+        request.headers.setdefault('User-Agent', random.choice(user_agent_list))
+        # 设置代理IP
+        ipdaili = []
+        request.bindaddress = random.choice(ipdaili)  # 绑定某一个地址
+        # Must either;
+        # - return a Response object
+        # - return a Request object
+        # - or raise IgnoreRequest
+        return response
 
-        # Must return an iterable of Request, dict or Item objects.
-        for i in result:
-            yield i
+    def process_exception(self, request, exception, spider):
+        # Called when a download handler or a process_request()
+        # (from other downloader middleware) raises an exception.
 
-    def process_spider_exception(response, exception, spider):
-        # Called when a spider or process_spider_input() method
-        # (from other spider middleware) raises an exception.
-
-        # Should return either None or an iterable of Response, dict
-        # or Item objects.
+        # Must either:
+        # - return None: continue processing this exception
+        # - return a Response object: stops process_exception() chain
+        # - return a Request object: stops process_exception() chain
         pass
-
-    def process_start_requests(start_requests, spider):
-        # Called with the start requests of the spider, and works
-        # similarly to the process_spider_output() method, except
-        # that it doesn’t have a response associated.
-
-        # Must return only requests (not items).
-        for r in start_requests:
-            yield r
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
 
-    def process_request(self,request,spider):
-        self.logger.debug('PhantomJS is Starting')
-        page = request.meta.get('page',1)
-        try:
-            self.browser.get(request.url)
-            if page > 1:
-                input = self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '#mainsrp-pager div.form' > input)))
-                submit = self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#mainsrp-pager div.form > span.btn.J_Submit')))
-                input.clear()
-                input.send_keys(page)
-                submit.click()
-            self.wait.until(EC.text_to_be_present_in_element((By.CSS_SELECTOR, '#mainsrp-pager li.item.active > span'),str(page)))
-            self.wait.until(EC.presence_of_element_located_in_element((By.CSS_SELECTOR, '.m-itemlist .items .item')))
-        except TimeoutException:
-            return HtmlResponse(url=request.url,body=self.browser.page_source,request=request,encoding='utf-8',status=200)
-    @classmethod
-    def from_crawler(cls,crawler):
-        return cls(timeout = crawler.settings.get('SELENINUM_TIMEOUT'),
-            service_args =crawler.settings.get('PHANTOMJS_SERVICE_ARGS'))
-        
+'''
 
-        # 点击下一页按钮
+
+
+class SeleniumMiddleware(object):
+    def process_request(self, request, spider):
+        if spider.name == 'taobao':
+            try:
+                spider.browser.get(request.url)
+                spider.browser.execute_script('window.scrollTo(0, document.body.scrollHeight)')
+            except TimeoutException as e:
+                print('超时')
+                spider.browser.execute_script('window.stop()')
+            time.sleep(2)
+            return HtmlResponse(url=spider.browser.current_url, body=spider.browser.page_source,
+                                encoding="utf-8", request=request)
+
+    def __init__(self, agents):
+        self.agents = agents
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(crawler.settings.getlist("USER_AGENTS"))
+

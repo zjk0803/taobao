@@ -29,16 +29,16 @@ class loginTB(object):
         try:
             # 寻找密码登陆按钮
             login_links = self.wait.until(
-                EC.presence_of_element_located((By.XPATH,"//a[text()='扫码登录']"))
+                EC.presence_of_element_located((By.XPATH, "//a[text()='扫码登录']"))
             )
             login_links.click()
         except TimeoutException as e:
-            print("找不到登陆入口，原因是：",e)
+            print("找不到登陆入口，原因是：", e)
 
             try:
                 # 试探能否找到个人信息，如果找不到说明登录失败
                 user_info = self.wait.until(
-                    EC.presence_of_element_located((By.XPATH,"//div[@class='m-userinfo']"))
+                    EC.presence_of_element_located((By.XPATH, "//div[@class='m-userinfo']"))
                 )
                 print('已经登陆成功，进入了个人中心')
             except TimeoutException:
