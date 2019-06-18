@@ -1,13 +1,6 @@
 # -*- coding: utf-8 -*-
 
 
-from time import sleep
-import time
-import random
-from pyquery import PyQuery as pq
-
-from scrapy import Request,Spider
-from urllib.parse import quote
 from taobao.items import TaobaoItem
 
 from scrapy import Spider,Request
@@ -25,7 +18,7 @@ class loginTB(Spider):
 
     def start_requests(self):
         start_urls = [
-            'https://s.taobao.com/search?q=ipad'.format(
+            'https://s.taobao.com/search?q=iphone'.format(
                 str(i)) for i in range(1, 150, 2)]
         for url in start_urls:
             yield Request(url=url, callback=self.parse)
