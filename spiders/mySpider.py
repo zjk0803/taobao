@@ -12,14 +12,16 @@ class loginTB(Spider):
         self.browser = webdriver.Chrome("D:\google浏览器\Application\chromedriver1.exe")
         self.browser.set_page_load_timeout(30)
 
-    #def closed(self, spider):
-    #    print("spider closed")
-    #    self.browser.close()
+
+
+    def closed(self, spider):
+        print("spider closed")
+        self.browser.close()
 
     def start_requests(self):
         start_urls = [
-            'https://s.taobao.com/search?q=iphone'.format(
-                str(i)) for i in range(1, 150, 2)]
+            'https://s.taobao.com/search?q=iphone&bcoffset=10&p4ppushleft=1%2C48&ntoffset=10&s={}'.format(
+                str(i)) for i in range(0, 440, 44)]
         for url in start_urls:
             yield Request(url=url, callback=self.parse)
 
